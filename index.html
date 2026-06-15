@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudPlay — AAA Games on Any Laptop</title>
+<meta name="description" content="Play high-end PC games on any laptop or desktop. No gaming PC needed. Stream from our GPU servers, starting at ₹199/month.">
+
+<!-- Open Graph (for sharing on WhatsApp, Discord, Twitter) -->
+<meta property="og:title" content="CloudPlay — AAA Games on Any Laptop">
+<meta property="og:description" content="No gaming PC needed. Stream AAA games from our GPU servers. Starting at ₹199/month.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cloudplay.vercel.app">
+<meta property="og:image" content="https://cloudplay.vercel.app/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CloudPlay — AAA Games on Any Laptop">
+<meta name="twitter:description" content="No gaming PC needed. Stream AAA games from our GPU servers. Starting at ₹199/month.">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:   #0A0F1E;
+  --navy2:  #0D1528;
+  --navy3:  #111C35;
+  --blue:   #3B7BF8;
+  --cyan:   #00D4FF;
+  --white:  #E8EDF8;
+  --muted:  #6B7A99;
+  --border: rgba(255,255,255,0.07);
+  --font-d: 'Space Grotesk', sans-serif;
+  --font-b: 'Inter', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--navy); color: var(--white); font-family: var(--font-b); font-size: 16px; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: var(--font-b); border: none; outline: none; }
+input, select, textarea { outline: none; font-family: var(--font-b); }
+
+/* ── Nav ─────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 5%; display: flex; align-items: center; justify-content: space-between;
+  height: 64px; background: rgba(10,15,30,0.85);
+  backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); transition: background 0.3s;
+}
+.logo { font-family: var(--font-d); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+.logo span { color: var(--cyan); }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a { font-size: 14px; color: var(--muted); font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--white); }
+.nav-cta { background: var(--blue); color: #fff; padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; transition: background 0.2s, transform 0.15s; }
+.nav-cta:hover { background: #2d6ae0; transform: translateY(-1px); }
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn-primary { background: var(--blue); color: #fff; padding: 14px 32px; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: var(--font-d); transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 24px rgba(59,123,248,0.35); }
+.btn-primary:hover { background: #2d6ae0; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(59,123,248,0.45); }
+.btn-ghost { background: transparent; color: var(--white); padding: 14px 32px; border-radius: 10px; font-size: 15px; font-weight: 500; font-family: var(--font-d); border: 1px solid var(--border); transition: border-color 0.2s, background 0.2s, transform 0.15s; }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); transform: translateY(-2px); }
+
+/* ── Hero ─────────────────────────────────────────────────── */
+#hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 120px 5% 80px; overflow: hidden; text-align: center; }
+#hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.55; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2); border-radius: 99px; padding: 6px 16px; font-size: 13px; color: var(--cyan); font-family: var(--font-d); font-weight: 500; letter-spacing: 0.03em; margin-bottom: 28px; position: relative; z-index: 2; }
+.eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: pulse-dot 2s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+.hero-headline { font-family: var(--font-d); font-size: clamp(46px,7vw,88px); font-weight: 700; line-height: 1.0; letter-spacing: -2px; margin-bottom: 24px; position: relative; z-index: 2; }
+.hero-headline .line1 { display: block; color: var(--white); }
+.hero-headline .line2 { display: block; color: var(--cyan); text-shadow: 0 0 40px rgba(0,212,255,0.4),0 0 80px rgba(0,212,255,0.15); }
+.hero-headline .line3 { display: block; color: var(--white); }
+.hero-sub { font-size: clamp(16px,2vw,20px); color: var(--muted); max-width: 540px; margin: 0 auto 40px; position: relative; z-index: 2; line-height: 1.6; }
+.hero-sub strong { color: var(--white); font-weight: 500; }
+.hero-actions { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; position: relative; z-index: 2; margin-bottom: 56px; }
+.hero-social-proof { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; position: relative; z-index: 2; }
+.proof-avatars { display: flex; margin-right: 4px; }
+.proof-avatar { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--navy); margin-left: -8px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+.proof-avatar:first-child { margin-left: 0; }
+.pa1{background:#3B7BF8;color:#fff} .pa2{background:#7B5EA7;color:#fff} .pa3{background:#2ECC8D;color:#fff} .pa4{background:#F59E0B;color:#fff}
+.proof-count { color: var(--cyan); font-weight: 600; }
+
+/* ── Stats bar ───────────────────────────────────────────── */
+#stats { background: var(--navy2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 32px 5%; }
+.stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); border-radius: 12px; overflow: hidden; max-width: 860px; margin: 0 auto; }
+.stat-item { background: var(--navy2); padding: 28px 24px; text-align: center; }
+.stat-num { font-family: var(--font-d); font-size: 36px; font-weight: 700; color: var(--white); line-height: 1; margin-bottom: 6px; letter-spacing: -1px; }
+.stat-num .accent { color: var(--cyan); }
+.stat-label { font-size: 13px; color: var(--muted); }
+
+/* ── Section shared ──────────────────────────────────────── */
+.section-label { font-size: 12px; font-family: var(--font-d); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px; }
+.section-title { font-family: var(--font-d); font-size: clamp(28px,4vw,44px); font-weight: 700; letter-spacing: -1px; color: var(--white); margin-bottom: 16px; line-height: 1.1; }
+.section-sub { font-size: 17px; color: var(--muted); max-width: 500px; line-height: 1.7; margin-bottom: 60px; }
+
+/* ── How it works ────────────────────────────────────────── */
+#how { padding: 100px 5%; max-width: 1100px; margin: 0 auto; }
+.steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; background: var(--border); border-radius: 16px; overflow: hidden; }
+.step-card { background: var(--navy2); padding: 40px 32px; position: relative; transition: background 0.2s; }
+.step-card:hover { background: var(--navy3); }
+.step-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 22px; }
+.step-icon.blue{background:rgba(59,123,248,0.12)} .step-icon.cyan{background:rgba(0,212,255,0.10)} .step-icon.purple{background:rgba(139,92,246,0.12)}
+.step-num-bg { position: absolute; top: 24px; right: 24px; font-family: var(--font-d); font-size: 72px; font-weight: 700; color: rgba(255,255,255,0.03); line-height: 1; pointer-events: none; }
+.step-title { font-family: var(--font-d); font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+.step-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── Features ────────────────────────────────────────────── */
+#features { padding: 100px 5%; max-width: 1100px; margin: 0 auto; }
+.features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 2px; background: var(--border); border-radius: 16px; overflow: hidden; }
+.feature-card { background: var(--navy2); padding: 40px; transition: background 0.2s; }
+.feature-card:hover { background: var(--navy3); }
+.feature-card.wide { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.feature-icon { font-size: 28px; margin-bottom: 16px; display: block; }
+.feature-title { font-family: var(--font-d); font-size: 20px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+.feature-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.feature-visual { background: var(--navy3); border-radius: 12px; height: 180px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); overflow: hidden; }
+.tech-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { background: rgba(59,123,248,0.1); border: 1px solid rgba(59,123,248,0.2); color: #8bb4fc; font-size: 12px; font-family: var(--font-d); font-weight: 500; padding: 4px 12px; border-radius: 6px; }
+
+/* ── Pricing ─────────────────────────────────────────────── */
+#pricing { padding: 100px 5%; max-width: 1000px; margin: 0 auto; text-align: center; }
+.plans-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; background: var(--border); border-radius: 16px; overflow: hidden; margin-top: 56px; text-align: left; }
+.plan-card { background: var(--navy2); padding: 36px 32px; position: relative; transition: background 0.2s; }
+.plan-card:hover { background: var(--navy3); }
+.plan-card.featured { background: var(--navy3); outline: 2px solid var(--blue); outline-offset: -2px; z-index: 1; }
+.plan-badge { display: inline-block; background: var(--blue); color: #fff; font-size: 11px; font-family: var(--font-d); font-weight: 600; letter-spacing: 0.05em; padding: 3px 10px; border-radius: 6px; margin-bottom: 16px; }
+.plan-name { font-family: var(--font-d); font-size: 15px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.plan-price { font-family: var(--font-d); font-size: 44px; font-weight: 700; color: var(--white); letter-spacing: -2px; line-height: 1; margin-bottom: 4px; }
+.plan-price sup { font-size: 20px; font-weight: 500; vertical-align: super; letter-spacing: 0; }
+.plan-period { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+.plan-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+.plan-features li { font-size: 14px; color: var(--muted); display: flex; align-items: flex-start; gap: 10px; }
+.plan-features li::before { content: ''; width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M3 8l3.5 3.5L13 5' stroke='%2300D4FF' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-size: contain; }
+.plan-features li.dim { color: rgba(107,122,153,0.4); }
+.plan-features li.dim::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M5 8h6' stroke='%236B7A99' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); }
+.plan-cta { width: 100%; padding: 13px; border-radius: 9px; font-size: 14px; font-weight: 600; font-family: var(--font-d); transition: all 0.2s; }
+.plan-cta.primary { background: var(--blue); color: #fff; box-shadow: 0 4px 20px rgba(59,123,248,0.3); }
+.plan-cta.primary:hover { background: #2d6ae0; transform: translateY(-1px); }
+.plan-cta.outline { background: transparent; color: var(--white); border: 1px solid var(--border); }
+.plan-cta.outline:hover { border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.03); }
+.plan-tier-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+.tier-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ── Waitlist ─────────────────────────────────────────────── */
+#waitlist { padding: 120px 5%; max-width: 700px; margin: 0 auto; text-align: center; }
+.waitlist-card { background: var(--navy2); border: 1px solid var(--border); border-radius: 20px; padding: 56px 48px; position: relative; overflow: hidden; }
+.waitlist-card::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 60%; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+.waitlist-title { font-family: var(--font-d); font-size: clamp(24px,4vw,34px); font-weight: 700; color: var(--white); letter-spacing: -1px; line-height: 1.15; margin-bottom: 12px; }
+.waitlist-sub { font-size: 16px; color: var(--muted); margin-bottom: 36px; line-height: 1.6; }
+.waitlist-form { display: flex; flex-direction: column; gap: 12px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-field { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.form-field label { font-size: 12px; color: var(--muted); font-weight: 500; font-family: var(--font-d); }
+.form-field input, .form-field select, .form-field textarea { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 9px; padding: 12px 16px; font-size: 14px; color: var(--white); width: 100%; transition: border-color 0.2s; -webkit-appearance: none; }
+.form-field input::placeholder, .form-field textarea::placeholder { color: var(--muted); }
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.03); }
+.form-field select option { background: var(--navy2); color: var(--white); }
+.form-submit { background: var(--blue); color: #fff; padding: 15px; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: var(--font-d); transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 24px rgba(59,123,248,0.35); width: 100%; margin-top: 4px; }
+.form-submit:hover { background: #2d6ae0; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(59,123,248,0.45); }
+.form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.form-note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.success-msg { display: none; text-align: center; }
+.success-msg.show { display: block; }
+
+/* Registration successful */
+.success-title {
+  font-family: var(--font-d); font-size: 26px; font-weight: 700;
+  color: var(--white); margin-bottom: 6px; letter-spacing: -0.5px;
+  animation: fadeUp 0.5s ease both;
+}
+.success-email-line {
+  font-size: 14px; color: var(--muted); margin-bottom: 28px;
+  animation: fadeUp 0.5s ease 0.1s both;
+}
+.success-email-line strong { color: var(--cyan); }
+
+/* Mission passed card */
+.mission-passed {
+  display: inline-flex; flex-direction: column; align-items: center;
+  background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.25);
+  border-radius: 14px; padding: 18px 32px; margin-bottom: 24px;
+  transform: translateX(120px); opacity: 0;
+  transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease;
+}
+.mission-passed.slide-in { transform: translateX(0); opacity: 1; }
+.mission-tag {
+  font-size: 10px; font-family: var(--font-d); font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(0,212,255,0.5); margin-bottom: 4px;
+}
+.mission-text {
+  font-family: var(--font-d); font-size: 28px; font-weight: 700;
+  color: var(--cyan); letter-spacing: -0.5px;
+  text-shadow: 0 0 24px rgba(0,212,255,0.5);
+}
+.mission-star { font-size: 18px; margin-top: 4px; letter-spacing: 4px; }
+
+/* Tagline below */
+.success-tagline {
+  font-size: 15px; color: var(--muted); line-height: 1.7;
+  opacity: 0; animation: fadeIn 1.2s ease 1.4s both;
+}
+.success-tagline strong { color: var(--white); }
+.respect-text {
+  display: inline-block; color: var(--cyan); font-weight: 600;
+  opacity: 0; animation: fadeIn 1.5s ease 2.2s both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+footer { border-top: 1px solid var(--border); padding: 40px 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.footer-logo { font-family: var(--font-d); font-size: 16px; font-weight: 700; }
+.footer-logo span { color: var(--cyan); }
+.footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+.footer-links a { font-size: 13px; color: var(--muted); transition: color 0.2s; }
+.footer-links a:hover { color: var(--white); }
+.footer-copy { font-size: 13px; color: var(--muted); }
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-links a:not(.nav-cta) { display: none; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .feature-card.wide { grid-template-columns: 1fr; }
+  .plans-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .waitlist-card { padding: 36px 24px; }
+  footer { flex-direction: column; text-align: center; }
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav id="navbar">
+  <div class="logo"><span>Cloud</span>Play</div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#waitlist" class="nav-cta">Join beta</a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-eyebrow">
+    <div class="eyebrow-dot"></div>
+    Beta launching in India · Limited seats
+  </div>
+  <h1 class="hero-headline">
+    <span class="line1">Your ₹25,000 laptop.</span>
+    <span class="line2">AAA games.</span>
+    <span class="line3">No compromise.</span>
+  </h1>
+  <p class="hero-sub">
+    Games run on our <strong>GPU servers</strong> in Mumbai — not your laptop.
+    Stream at 720p, 1080p, or 4K with latency under <strong>20ms</strong>. Cancel anytime.
+  </p>
+  <div class="hero-actions">
+    <a href="#waitlist" class="btn-primary">Join the waitlist →</a>
+    <a href="#how" class="btn-ghost">See how it works</a>
+  </div>
+  <div class="hero-social-proof">
+    <div class="proof-avatars">
+      <div class="proof-avatar pa1">A</div>
+      <div class="proof-avatar pa2">R</div>
+      <div class="proof-avatar pa3">S</div>
+      <div class="proof-avatar pa4">V</div>
+    </div>
+    <span><span class="proof-count" id="waitlist-count">0</span> gamers already on the list</span>
+  </div>
+</section>
+
+<!-- ── Stats ── -->
+<section id="stats">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-num"><span class="accent">&lt;</span>20ms</div>
+      <div class="stat-label">avg latency, India servers</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">50<span class="accent">+</span></div>
+      <div class="stat-label">games at launch</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">₹<span class="accent">199</span></div>
+      <div class="stat-label">starting per month</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">4<span class="accent">K</span></div>
+      <div class="stat-label">max resolution, Ultra plan</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it works ── -->
+<section id="how">
+  <p class="section-label">How it works</p>
+  <h2 class="section-title">Three steps to your first session</h2>
+  <p class="section-sub">No setup, no downloads. From signup to playing in under two minutes.</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num-bg">01</div>
+      <div class="step-icon blue">🔐</div>
+      <h3 class="step-title">Create your account</h3>
+      <p class="step-desc">Sign up with email. Pick a plan — Basic at ₹199, Pro at ₹399, or Ultra at ₹799. Pay via UPI, card, or net banking.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num-bg">02</div>
+      <div class="step-icon cyan">🎮</div>
+      <h3 class="step-title">Pick a game and launch</h3>
+      <p class="step-desc">Browse the library, click Play. A GPU server in Mumbai spins up in 15–20 seconds. Your session starts streaming to your browser.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num-bg">03</div>
+      <div class="step-icon purple">⚡</div>
+      <h3 class="step-title">Play — then close the tab</h3>
+      <p class="step-desc">Use your keyboard and mouse as normal. Your inputs go to the server, the video comes back. End the session when done — no files to clean up.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features ── -->
+<section id="features">
+  <p class="section-label">Features</p>
+  <h2 class="section-title">Built for Indian internet</h2>
+  <p class="section-sub">Most cloud gaming platforms are built for 100Mbps fibre. We are built for the actual connections people have.</p>
+  <div class="features-grid">
+    <div class="feature-card wide">
+      <div>
+        <span class="feature-icon">📡</span>
+        <h3 class="feature-title">Mumbai-based GPU servers</h3>
+        <p class="feature-desc">Our servers are hosted in Mumbai data centres. That means 8–18ms latency for most of India. Hyderabad and Delhi nodes coming in Q3 2025.</p>
+        <div class="tech-chips">
+          <span class="chip">NVIDIA T4</span>
+          <span class="chip">NVIDIA A10G</span>
+          <span class="chip">NVIDIA A100</span>
+          <span class="chip">WebRTC streaming</span>
+          <span class="chip">Adaptive bitrate</span>
+        </div>
+      </div>
+      <div class="feature-visual">
+        <canvas id="latency-canvas" width="260" height="160"></canvas>
+      </div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔒</span>
+      <h3 class="feature-title">Works on any browser</h3>
+      <p class="feature-desc">Chrome, Edge, Brave — no plugins, no extensions. If it can open YouTube, it can run CloudPlay at full quality.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">💸</span>
+      <h3 class="feature-title">UPI-first payments</h3>
+      <p class="feature-desc">Pay monthly via UPI, PhonePe, GPay, cards, or net banking. Powered by Razorpay. Cancel from the dashboard any time.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎯</span>
+      <h3 class="feature-title">Your save files, always there</h3>
+      <p class="feature-desc">Game saves are stored in the cloud. Start a session on Monday, come back Friday — you are exactly where you left off.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📶</span>
+      <h3 class="feature-title">Adaptive quality</h3>
+      <p class="feature-desc">If your connection dips, the stream gracefully steps down quality rather than freezing. 15Mbps is all you need for 1080p/60fps.</p>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ── Waitlist ── -->
+<section id="waitlist">
+  <div class="waitlist-card">
+    <h2 class="waitlist-title">Get early access before we launch</h2>
+    <p class="waitlist-sub">Beta spots are limited. Join now and get <strong style="color:var(--white)">1 month free</strong> on any plan when we launch.</p>
+    <form class="waitlist-form" id="waitlistForm" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" placeholder="Arjun Kumar" required autocomplete="name">
+        </div>
+        <div class="form-field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="arjun@email.com" required autocomplete="email">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="city">City</label>
+          <input type="text" id="city" placeholder="Bengaluru" required>
+        </div>
+        <div class="form-field">
+          <label for="laptopName">Laptop / PC name</label>
+          <input type="text" id="laptopName" placeholder="e.g. Dell Inspiron 15, HP Pavilion" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="processor">Processor</label>
+          <input type="text" id="processor" placeholder="e.g. Intel i5-12th Gen, Ryzen 5 5600H">
+        </div>
+        <div class="form-field">
+          <label for="graphicsCard">Graphics card</label>
+          <input type="text" id="graphicsCard" placeholder="e.g. NVIDIA GTX 1650, Intel Iris Xe">
+        </div>
+      </div>
+      <button type="submit" class="form-submit" id="submitBtn">
+        <span id="submitText">Reserve my spot →</span>
+      </button>
+      <p class="form-note">No spam. No credit card needed. We'll email you when beta opens.</p>
+    </form>
+    <div class="success-msg" id="successMsg">
+      <div class="success-title">Registration Successful 🎉</div>
+      <p class="success-email-line">Confirmation sent to <strong id="confirmedEmail"></strong></p>
+      <div class="mission-passed" id="missionPassed">
+        <span class="mission-tag">CloudPlay</span>
+        <span class="mission-text">MISSION PASSED</span>
+        <span class="mission-star">⭐⭐⭐</span>
+      </div>
+      <p class="success-tagline">
+        You're officially on the CloudPlay waitlist.<br>
+        <span class="respect-text">Respect +</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-logo"><span>Cloud</span>Play</div>
+  <div class="footer-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#waitlist">Join beta</a>
+  </div>
+  <div class="footer-copy">© 2025 CloudPlay · Made in India 🇮🇳</div>
+</footer>
+
+<script>
+/* ── Config — replace with your Render backend URL ───────── */
+const BACKEND_URL = 'https://cloudgame.onrender.com';
+
+if (BACKEND_URL.includes('YOUR_APP')) {
+  console.error(
+    '[CloudPlay] BACKEND_URL is still the placeholder "https://YOUR_APP.onrender.com". ' +
+    'Replace it with your real Render URL (e.g. https://cloudplay-api.onrender.com), ' +
+    'or all API calls — including waitlist signups — will fail.'
+  );
+}
+
+/* ── Fetch live waitlist count on load ───────────────────── */
+async function loadCount() {
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/waitlist/count`);
+    const d = await r.json();
+    if (d.success && d.count > 0) {
+      document.getElementById('waitlist-count').textContent =
+        d.count.toLocaleString('en-IN');
+    }
+  } catch (_) {}
+}
+loadCount();
+
+/* ── Retry any submissions that failed to reach the server ── */
+async function syncPendingEntries() {
+  let pending = [];
+  try {
+    pending = JSON.parse(localStorage.getItem('cp_pending') || '[]');
+  } catch (_) {
+    pending = [];
+  }
+  if (!pending.length) return;
+
+  const stillPending = [];
+  for (const entry of pending) {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/waitlist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: entry.name, email: entry.email,
+          city: entry.city, device: entry.device,
+        }),
+      });
+      const data = await res.json();
+      // Success, or already registered — either way it's now in the DB.
+      if (!data.success && data.message !== 'You are already on the waitlist!') {
+        stillPending.push(entry);
+      }
+    } catch (_) {
+      stillPending.push(entry); // still offline/unreachable, keep for next time
+    }
+  }
+  localStorage.setItem('cp_pending', JSON.stringify(stillPending));
+}
+syncPendingEntries();
+
+/* ── Hero canvas — streaming particles ───────────────────── */
+const canvas = document.getElementById('hero-canvas');
+const ctx    = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resizeCanvas() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function createParticle() {
+  return { x: Math.random()*W*0.4+W*0.1, y: Math.random()*H, tx: Math.random()*W*0.4+W*0.5, ty: Math.random()*H, progress: 0, speed: 0.002+Math.random()*0.004, size: 1+Math.random()*2, color: Math.random()>0.5?'#00D4FF':'#3B7BF8', opacity: 0 };
+}
+for (let i=0;i<60;i++) { const p=createParticle(); p.progress=Math.random(); particles.push(p); }
+
+function easeInOut(t) { return t<0.5?2*t*t:-1+(4-2*t)*t; }
+
+function animateParticles() {
+  ctx.clearRect(0,0,W,H);
+  particles.forEach((p,i) => {
+    p.progress += p.speed;
+    if (p.progress>1) { particles[i]=createParticle(); return; }
+    const ease = easeInOut(p.progress);
+    const x = p.x+(p.tx-p.x)*ease, y = p.y+(p.ty-p.y)*ease;
+    p.opacity = p.progress<0.15?p.progress/0.15:p.progress>0.85?(1-p.progress)/0.15:1;
+    ctx.beginPath(); ctx.arc(x,y,p.size,0,Math.PI*2);
+    ctx.fillStyle=p.color; ctx.globalAlpha=p.opacity*0.6; ctx.fill();
+    if (p.progress>0.05&&p.progress<0.98) {
+      const pe=easeInOut(Math.max(0,p.progress-0.06));
+      ctx.beginPath(); ctx.moveTo(p.x+(p.tx-p.x)*pe,p.y+(p.ty-p.y)*pe); ctx.lineTo(x,y);
+      ctx.strokeStyle=p.color; ctx.globalAlpha=p.opacity*0.25; ctx.lineWidth=p.size*0.6; ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+/* ── Latency canvas ──────────────────────────────────────── */
+const lc = document.getElementById('latency-canvas');
+if (lc) {
+  const lctx = lc.getContext('2d');
+  const barData = [62,31,18,14,11,18,13,16,12,19,15,17];
+  const labels  = ['SG','US','SYD','BLR','MUM','CHN','DEL','HYD','PNE','AHM','KOL','CHN2'];
+  let frame = 0;
+  function drawBars() {
+    lctx.clearRect(0,0,260,160);
+    const bw=14,gap=6,total=barData.length,startX=(260-total*(bw+gap))/2,maxH=90,maxVal=Math.max(...barData);
+    barData.forEach((v,i)=>{
+      const x=startX+i*(bw+gap),h=(v/maxVal)*maxH,isIndia=[3,4,7,8,9,10,11].includes(i),isMum=i===4;
+      const wave=Math.sin(frame*0.04+i)*2,animH=h+(isIndia?wave:0),animY=120-animH;
+      lctx.beginPath(); lctx.roundRect(x,animY,bw,animH,3);
+      lctx.fillStyle=isMum?'#00D4FF':isIndia?'rgba(0,212,255,0.35)':'rgba(107,122,153,0.25)'; lctx.fill();
+      lctx.fillStyle=isMum?'#00D4FF':isIndia?'rgba(0,212,255,0.7)':'rgba(107,122,153,0.5)';
+      lctx.font='9px Inter'; lctx.textAlign='center';
+      lctx.fillText(v+'ms',x+bw/2,animY-4);
+      lctx.fillStyle='rgba(107,122,153,0.5)'; lctx.fillText(labels[i],x+bw/2,135);
+    });
+    lctx.fillStyle='rgba(0,212,255,0.6)'; lctx.font='500 11px Inter'; lctx.textAlign='center';
+    lctx.fillText('India latency (ms) · Mumbai highlighted',130,152);
+    frame++; requestAnimationFrame(drawBars);
+  }
+  drawBars();
+}
+
+/* ── Show success UI ──────────────────────────────────────── */
+function showSuccess(email) {
+  document.getElementById('waitlistForm').style.display = 'none';
+  document.getElementById('confirmedEmail').textContent = email;
+  document.getElementById('successMsg').classList.add('show');
+
+  // Slide in MISSION PASSED from the right after a short delay
+  setTimeout(() => {
+    document.getElementById('missionPassed').classList.add('slide-in');
+  }, 500);
+
+  // Update counter
+  const el = document.getElementById('waitlist-count');
+  const cur = parseInt(el.textContent.replace(/,/g,'')) || 0;
+  el.textContent = (cur + 1).toLocaleString('en-IN');
+}
+
+/* ── Waitlist form submit ─────────────────────────────────── */
+async function handleSubmit(e) {
+  e.preventDefault();
+  const btn          = document.getElementById('submitBtn');
+  const txt          = document.getElementById('submitText');
+  const name         = document.getElementById('name').value.trim();
+  const email        = document.getElementById('email').value.trim();
+  const city         = document.getElementById('city').value.trim();
+  const laptopName   = document.getElementById('laptopName').value.trim();
+  const processor    = document.getElementById('processor').value.trim();
+  const graphicsCard = document.getElementById('graphicsCard').value.trim();
+
+  const deviceParts = [laptopName];
+  if (processor)    deviceParts.push('CPU: ' + processor);
+  if (graphicsCard) deviceParts.push('GPU: ' + graphicsCard);
+  const device = deviceParts.join(' | ');
+
+  btn.disabled = true;
+  txt.textContent = 'Saving your spot...';
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    const res = await fetch(`${BACKEND_URL}/api/waitlist`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, city, device }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    const data = await res.json();
+
+    if (data.success) {
+      showSuccess(email);
+    } else if (data.message === 'You are already on the waitlist!') {
+      txt.textContent = "You're already on the list ✓";
+      btn.style.background = '#2ECC8D';
+    } else {
+      throw new Error(data.message || 'Server error');
+    }
+
+  } catch (err) {
+    // Could NOT confirm this was saved to the database.
+    // Do not show success — that would be a lie.
+    // Save locally so we can retry automatically next visit,
+    // but tell the user honestly that it failed right now.
+    const entry = { name, email, city, device, submittedAt: new Date().toISOString() };
+    let pending = [];
+    try {
+      pending = JSON.parse(localStorage.getItem('cp_pending') || '[]');
+    } catch (_) {
+      pending = [];
+    }
+    if (!pending.some(e => e.email === email)) {
+      pending.push(entry);
+      localStorage.setItem('cp_pending', JSON.stringify(pending));
+    }
+
+    const isAbort = err.name === 'AbortError';
+    txt.textContent = isAbort
+      ? 'Server is slow to respond — please try again'
+      : 'Could not reach server — please try again';
+    btn.style.background = '#E5484D';
+
+    setTimeout(() => {
+      txt.textContent = 'Reserve my spot →';
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 3000);
+  }
+}
+
+/* ── Nav scroll effect ───────────────────────────────────── */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').style.background =
+    window.scrollY > 20 ? 'rgba(10,15,30,0.97)' : 'rgba(10,15,30,0.85)';
+});
+</script>
+</body>
+</html>
